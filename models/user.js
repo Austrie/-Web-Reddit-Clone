@@ -15,23 +15,10 @@ const UserSchema = new Schema({
 
 // UserSchema methods
 
-UserSchema.methods.encryptPassword = function(plainTextPassword) {
-  "If password is empty/undefined or not a string"
-  if (!plainTextPassword || typeof plainTextPassword != "string") {
-    console.log("Password not acceptable (encrypt)");
-    return ''
-  } else {
-    var salt = bcrypt.genSaltSync(10);
-    return bcrypt.hashSync(plainTextPassword, salt);
-  }
-};
-
-UserSchema.methods.comparePassword = function(attemptedPassword) {
-  if (!attemptedPassword || typeof plainTextPassword != "string") {
-    console.log("Password not acceptable (compare)");
-    return false;
-  }
-  return bcrypt.compareSync(attemptedPassword, hash);
+UserSchema.methods.comparePassword = function(attemptedPassword, done) {
+  bcrypt.compare(attemptedPassword, this.password, (err, isMatch) => {
+    done(err, isMatch);
+  });
 };
 
 //I think save is supposed to update the whole document
@@ -49,9 +36,16 @@ UserSchema.pre('save', function(next) {
   // I think this is only happens for new password
   if (this.isModified('password')) {
     console.log("Password updated in save method")
-    this.password = this.encryptPassword(this.password);
+    const user = this;
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(user.password, salt, (err, hash) => {
+        user.password = hash;
+        next();
+      });
+    });
+  } else {
+    next();
   }
-  next();
 });
 
 // Not fully tested
@@ -69,9 +63,13 @@ UserSchema.pre('update', function(next) {
   console.log("Password updated in update method")
   // Edit the plain text new password in the update
   // with a hash version
-  this.getUpdate().$set.password = this.encryptPassword(password);
-  next()
-
+  const user = this;
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(password, salt, (err, hash) => {
+      user.getUpdate().$set.password = hash;
+      next();
+    });
+  });
 });
 
 
