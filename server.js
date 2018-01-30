@@ -1,4 +1,12 @@
+// These next three lines are for authentication and tokens
+// dotenv npm package
+require('dotenv').config();
+var cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+
 const app = (require('express'))();
+app.use(cookieParser());
+
 
 //We're using Handlebars for ExpressJS
 var exphbs = require('express-handlebars');
@@ -23,7 +31,7 @@ const Post = require('./models/post');
 //GET and POST method for creating a new post
 require('./controllers/posts.js')(app);
 
-//GET and POST method for registering
+//GET and POST method for registering and logging out
 require('./controllers/auth.js')(app)
 
 //For comments
@@ -32,6 +40,7 @@ require('./controllers/comments.js')(app);
 
 // Home page
 app.get('/', (req, res) => {
+  // console.log("Cookie check: " + req.cookies);
   Post.find({}).then((posts) => {
     res.render('home', { posts });
 

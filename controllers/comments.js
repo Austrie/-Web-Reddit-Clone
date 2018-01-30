@@ -6,26 +6,22 @@ module.exports = (app) => {
   app.post('/posts/:postId/comments', (req, res) => {
     const comment = new Comment(req.body);
 
-
-    // console.log("Comment id: " + comment);
+    console.log("Was comment created 1: " + comment);
     //The save method does not return anything to then
-    comment.save().then(() => {
+    comment.save().then((mComment) => {
+      console.log("Was comment created 2: " + mComment);
       return Post.findById(req.params.postId);
     }).then((post) => {
       if (!post.comments) {
         post.comments = [];
       }
-      // console.log("Pre-push: " + post.comments.length);
-      // console.log("Comment id 2: " + comment);
       post.comments.unshift(comment);
-      // console.log("Post-push: " + post.comments.length);
 
-      // TODO: fix that it's not saving comment
-      post.save().then((post) => {
-        // console.log("Post after save: " + post);
-         res.redirect("/");
-       });
-    }).catch((err) => {
+      return post.save()
+    }).then((post) => {
+      // console.log("Post after save: " + post);
+       res.redirect("/");
+     }).catch((err) => {
       console.log(err.message)
     });
   });
