@@ -31,7 +31,7 @@ const Post = require('./models/post');
 //GET and POST method for creating a new post
 require('./controllers/posts.js')(app);
 
-//GET and POST method for registering and logging out
+//GET and POST method for registering, logging-in, and logging-out
 require('./controllers/auth.js')(app)
 
 //For comments
@@ -46,15 +46,6 @@ app.get('/', (req, res) => {
 
   }).catch((err) => {
     console.log(err.message);
-  });
-});
-
-// To view a specific post
-app.get('/posts/:id', (req, res) => {
-  Post.findById(req.params.id).populate('comments').then((post) => {
-    res.render('post-show', { post });
-  }).catch((err) => {
-  console.log(err.message);
   });
 });
 

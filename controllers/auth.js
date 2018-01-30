@@ -1,12 +1,12 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 module.exports = (app) => {
-  // Signup form
+  // GET: Signup form
   app.get('/register', (req, res) => {
     res.render('register');
   });
 
-  //POST request for register
+  //POST: register
   app.post('/register', (req, res) => {
     //Create User
     const user = new User(req.body);
@@ -18,5 +18,16 @@ module.exports = (app) => {
     }).catch((err) => {
       console.log(err.message);
     });
+  });
+
+  // GET: Logout
+  app.get('/logout', (req, res) => {
+    res.clearCookie('nToken');
+    res.redirect('/')
+  });
+
+  // GET: Login form
+  app.get('/login', (req, res) => {
+    res.render('login');
   });
 }
