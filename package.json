@@ -18,21 +18,22 @@
   },
   "homepage": "https://github.com/Austrie/-Web-Reddit-Clone#readme",
   "dependencies": {
-    "bcrypt": "^1.0.3",
-    "body-parser": "^1.18.2",
-    "cookie-parser": "^1.4.3",
-    "dotenv": "^5.0.0",
-    "express": "^4.16.2",
-    "express-handlebars": "^3.0.0",
-    "handlebars": "^4.0.11",
-    "jsonwebtoken": "^8.1.1",
-    "method-override": "^2.3.10",
-    "mongoose": "^4.13.9",
+    "bcrypt": "^4.0.0",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "handlebars": "^4.7.3",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.9.2",
+    "nani": "^3.2.1",
     "through2-map": "^3.0.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "chai-http": "^3.0.0",
-    "mocha": "^4.1.0"
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^7.1.0"
   }
 }

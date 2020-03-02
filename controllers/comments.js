@@ -5,11 +5,10 @@ module.exports = (app) => {
   //Create a comment
   app.post('/posts/:postId/comments', (req, res) => {
     const comment = new Comment(req.body);
+    comment.author = req.user._id;
 
-    console.log("Was comment created 1: " + comment);
     //The save method does not return anything to then
     comment.save().then((mComment) => {
-      console.log("Was comment created 2: " + mComment);
       return Post.findById(req.params.postId);
     }).then((post) => {
       if (!post.comments) {

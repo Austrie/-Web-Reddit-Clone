@@ -3,8 +3,8 @@
 require('dotenv').config();
 var cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-
-const app = (require('express'))();
+const express = require('express')
+const app = (express)();
 app.use(cookieParser());
 
 
@@ -18,12 +18,29 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Set up a static directory
+app.use(express.static('public'));
+
 // We're using MongoDB as our database
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/reddit-clone', { useMongoClient: true });
+mongoose.connect('mongodb://localhost/reddit-clone', { useNewUrlParser: true });
 mongoose.connection.on('error', console.error.bind(console, "MongoDB connection error: "));
 mongoose.set('debug', true);
+
+const checkAuth = (req, res, next) => {
+  console.log("Checking authentication");
+  if (typeof req.cookies.nToken === "undefined" || req.cookies.nToken === null) {
+    req.user = null;
+  } else {
+    var token = req.cookies.nToken;
+    var decodedToken = jwt.decode(token, { complete: true }) || {};
+    req.user = decodedToken.payload;
+  }
+
+  next();
+};
+app.use(checkAuth);
 
 // The data structure for Post
 const Post = require('./models/post');
@@ -36,23 +53,15 @@ require('./controllers/auth.js')(app)
 
 //For comments
 require('./controllers/comments.js')(app);
+require('./controllers/replies.js')(app);
 
 
 // Home page
 app.get('/', (req, res) => {
   // console.log("Cookie check: " + req.cookies);
-  Post.find({}).then((posts) => {
-    res.render('home', { posts });
+  Post.find().lean().then((posts) => {
+    res.render('home', { posts, currentUser: req.user });
 
-  }).catch((err) => {
-    console.log(err.message);
-  });
-});
-
-// To view posts of a subreddit
-app.get('/rc/:subreddit', (req, res) => {
-  Post.find({ subreddit: req.params.subreddit }).then((posts) => {
-    res.render('home', { posts });
   }).catch((err) => {
     console.log(err.message);
   });
@@ -63,3 +72,5 @@ app.get('/rc/:subreddit', (req, res) => {
 app.listen(3001, () => {
   console.log("Listening to port 3001");
 });
+
+module.exports = app;

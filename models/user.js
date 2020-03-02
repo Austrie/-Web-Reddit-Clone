@@ -1,5 +1,4 @@
 // The model for creating a typical user
-
 const mongoose = require('mongoose');
 // Bcrypt: Password encryption library installed using npm
 const bcrypt = require('bcrypt')
@@ -9,12 +8,12 @@ const UserSchema = new Schema({
   createdAt:  { type: Date },
   updatedAt:  { type: Date },
   password:   { type: String, select: false },
-  username:   { type: String, required: true }
+  username:   { type: String, required: true },
+  posts : [{ type: Schema.Types.ObjectId, ref: "Post" }]
 });
 
 
 // UserSchema methods
-
 UserSchema.methods.comparePassword = function(attemptedPassword, done) {
   bcrypt.compare(attemptedPassword, this.password, (err, isMatch) => {
     done(err, isMatch);

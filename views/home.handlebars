@@ -1,5 +1,7 @@
 <!-- home.handlebars -->
-<a href="/posts/new" class="btn btn-primary">New Post</a>
+{{#if currentUser}}
+  <a href="/posts/new" class="btn btn-primary">New Post</a>
+{{/if}}
 <div class="row">
   <div class="col-sm-8 col-sm-offset-2">
     <ul>
@@ -7,11 +9,19 @@
         <li class="list-group-item">
           <p><a href="/posts/{{this._id}}" class="lead">{{this.title}}</a></p>
           <a href="{{this.url}}" target="_blank">{{this.url}}</a>
+          {{#if this.author}}
+            <div><small>{{this.author.username}}</small></div>
+          {{else}}
+            <div><small>Anonymous User</small></div>
+          {{/if}}
+          <div class="text-right">
+            <small>{{this.comments.length}} comments</small>
+          </div>
           <div class="text-right">
             <a >{{this.createdAt}}</a>
           </div>
           <div class="text-right">
-            <a href="/rc/{{this.subreddit}}">{{this.subreddit}}</a>
+            <a href="/n/{{this.subreddit}}">/n/{{this.subreddit}}</a>
           </div>
         </li>
       {{/each}}
